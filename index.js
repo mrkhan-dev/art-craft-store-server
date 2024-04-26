@@ -7,10 +7,11 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// test
 app.get("/", (req, res) => {
-  res.send("server is running");
+  res.send("my server is running");
 });
 
 app.listen(port, () => {
-  console.log(`server is running on port : ${port}`);
+  console.log(`server running on port: ${port}`);
 });
