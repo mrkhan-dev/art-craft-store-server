@@ -27,11 +27,22 @@ async function run() {
 
     const craftCollection = client.db("craftStoreDB").collection("craftStore");
 
+    // get data to my craft list
+
     // create data
     app.post("/added_craft", async (req, res) => {
       const newItem = req.body;
       console.log(newItem);
       const result = await craftCollection.insertOne(newItem);
+      res.send(result);
+    });
+
+    // get data to my craft list
+    app.get("/myCraft/:email", async (req, res) => {
+      console.log(req.params.email);
+      const result = await craftCollection
+        .find({email: req.params.email})
+        .toArray();
       res.send(result);
     });
 
