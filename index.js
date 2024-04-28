@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const {MongoClient, ServerApiVersion} = require("mongodb");
+const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -32,17 +32,56 @@ async function run() {
     // create data
     app.post("/added_craft", async (req, res) => {
       const newItem = req.body;
-      console.log(newItem);
+      // console.log(newItem);
       const result = await craftCollection.insertOne(newItem);
       res.send(result);
     });
 
     // get data to my craft list
     app.get("/myCraft/:email", async (req, res) => {
-      console.log(req.params.email);
+      // console.log(req.params.email);
       const result = await craftCollection
         .find({email: req.params.email})
         .toArray();
+      res.send(result);
+    });
+
+    // get single data using id
+    app.get("/singleItem/:id", async (req, res) => {
+      const result = await craftCollection.findOne({
+        _id: new ObjectId(req.params.id),
+      });
+      res.send(result);
+    });
+
+    // update data
+    app.put("/updateCraft/:id", async (req, res) => {
+      console.log(req.params.id);
+      const query = {_id: new ObjectId(req.params.id)};
+      const updateCraft = req.body;
+      const craft = {
+        $set: {
+          name: updateCraft.name,
+          category: updateCraft.category,
+          price: updateCraft.price,
+          customization: updateCraft.customization,
+          stockStatus: updateCraft.stockStatus,
+          image: updateCraft.image,
+          rating: updateCraft.rating,
+          processingTime: updateCraft.processingTime,
+          description: updateCraft.description,
+        },
+      };
+      const result = await craftCollection.updateOne(query, craft);
+      console.log(result);
+      res.send(result);
+    });
+
+    // delete data
+    app.delete("/deleteItem/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await craftCollection.deleteOne(query);
       res.send(result);
     });
 
