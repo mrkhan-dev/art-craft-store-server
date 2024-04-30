@@ -25,7 +25,11 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 
-    const craftCollection = client.db("craftStoreDB").collection("craftStore");
+    // const craftCollection = client.db("craftStoreDB").collection("craftStore");
+
+    const db = client.db("craftStoreDB");
+    const craftCollection = db.collection("craftStore");
+    const manualCollection = db.collection("manuallyInserted");
 
     // get data to my craft list
 
@@ -37,12 +41,33 @@ async function run() {
       res.send(result);
     });
 
-    // get data to my craft list
+    // get all data
+    app.get("/allData", async (req, res) => {
+      const cursor = craftCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // get data to my craft list with email
     app.get("/myCraft/:email", async (req, res) => {
       // console.log(req.params.email);
       const result = await craftCollection
         .find({email: req.params.email})
         .toArray();
+      res.send(result);
+    });
+
+    // get data by category
+    app.get("/craftCategory/:category", async (req, res) => {
+      const result = await manualCollection
+        .find({category: req.params.category})
+        .toArray();
+      res.send(result);
+    });
+
+    app.get("/allCategory", async (req, res) => {
+      const cursor = manualCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
